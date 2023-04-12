@@ -1,12 +1,14 @@
 package com.w1866973.meal_mate
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appDatabase: AppDatabase
@@ -181,5 +183,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun onSearchMealByIngredientsButtonClicked(view: View){
+        val intent = Intent(this, SearchByIngredientsActivity::class.java)
+        startActivity(intent)
     }
 }

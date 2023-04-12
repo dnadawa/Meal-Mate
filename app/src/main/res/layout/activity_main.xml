@@ -19,7 +19,8 @@
         android:id="@+id/button4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search for Meals By Ingredient" />
+        android:text="Search for Meals By Ingredient"
+        android:onClick="onSearchMealByIngredientsButtonClicked"/>
 
     <Button
         android:id="@+id/button5"
