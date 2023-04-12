@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.room.Room
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -17,7 +16,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        appDatabase = Room.databaseBuilder(this, AppDatabase::class.java, "meal_mate_db").build()
+        appDatabase = AppDatabase.getDatabase(this)
         mealDao = appDatabase.mealDao()
     }
 

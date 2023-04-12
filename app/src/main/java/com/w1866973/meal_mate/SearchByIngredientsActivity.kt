@@ -11,6 +11,7 @@ import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.room.Room
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -18,6 +19,9 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class SearchByIngredientsActivity : AppCompatActivity() {
+
+    val fetchedMealsList : ArrayList<Meal> = arrayListOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_by_ingredients)
@@ -45,6 +49,8 @@ class SearchByIngredientsActivity : AppCompatActivity() {
         } else {
             progressBar.visibility = View.VISIBLE
             cardsListView.removeAllViews()
+            fetchedMealsList.clear()
+
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val fetchedData: JSONObject =
@@ -59,25 +65,25 @@ class SearchByIngredientsActivity : AppCompatActivity() {
                             idList.add(meal.getString("idMeal"))
                         }
 
-                        val fullMealsList: ArrayList<JSONObject> = arrayListOf()
+
                         for (id in idList) {
                             val mealData: JSONObject = sendHttpGetRequest("https://www.themealdb.com/api/json/v1/1/lookup.php?i=$id")
                             if (!mealData.isNull("meals")) {
                                 val mealsList: JSONArray = mealData.getJSONArray("meals")
                                 val meal: JSONObject = mealsList[0] as JSONObject
-                                fullMealsList.add(meal)
                                 val mealObj = Meal.fromJson(meal)
-                                withContext(Dispatchers.Main){
-                                    val textView = LayoutInflater.from(applicationContext).inflate(R.layout.card, cardsListView, false) as TextView
-                                    textView.text = mealObj.toString()
-                                    cardsListView.addView(textView)
-                                }
+                                fetchedMealsList.add(mealObj)
                             }
                         }
 
-
                         withContext(Dispatchers.Main){
                             progressBar.visibility = View.GONE
+
+                            for(meal in fetchedMealsList){
+                                val textView = LayoutInflater.from(applicationContext).inflate(R.layout.card, cardsListView, false) as TextView
+                                textView.text = meal.toString()
+                                cardsListView.addView(textView)
+                            }
                         }
 
                     } else {
@@ -120,5 +126,28 @@ class SearchByIngredientsActivity : AppCompatActivity() {
         }
 
         return JSONObject(response.toString())
+    }
+
+
+    fun onSaveToDBButtonClicked(view: View){
+       val appDatabase: AppDatabase = AppDatabase.getDatabase(this)
+        val mealDao: MealDao = appDatabase.mealDao()
+
+        if(fetchedMealsList.isEmpty()){
+            Toast.makeText(applicationContext, "No meals fetched!", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    for(meal in fetchedMealsList){
+                        mealDao.insertMeals(meal)
+                    }
+
+                    withContext(Dispatchers.Main){
+                        Toast.makeText(applicationContext, "Successfully added to the database!", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+        }
     }
 }
