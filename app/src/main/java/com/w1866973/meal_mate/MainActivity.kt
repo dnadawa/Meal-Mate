@@ -188,4 +188,9 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, SearchByIngredientsActivity::class.java)
         startActivity(intent)
     }
+
+    fun onSearchForMealsButtonClicked(view: View){
+        val intent = Intent(this, SearchForMealsActivity::class.java)
+        startActivity(intent)
+    }
 }
