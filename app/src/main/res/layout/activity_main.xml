@@ -12,7 +12,8 @@
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Meals to DB" />
+        android:text="Add Meals to DB"
+        android:onClick="onAddMealsButtonClicked"/>
 
     <Button
         android:id="@+id/button4"
