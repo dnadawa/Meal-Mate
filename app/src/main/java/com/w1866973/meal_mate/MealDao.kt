@@ -10,6 +10,6 @@ interface MealDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMeals(vararg meal: Meal)
 
-    @Query("SELECT * FROM Meal WHERE meal LIKE '%' || :searchString || '%' OR ingredients LIKE '%' || :searchString || '%'")
+    @Query("SELECT * FROM Meal WHERE LOWER(meal) LIKE LOWER('%' || :searchString || '%') OR LOWER(ingredients) LIKE LOWER('%' || :searchString || '%')")
     fun searchMeals(searchString: String): List<Meal>
 }
