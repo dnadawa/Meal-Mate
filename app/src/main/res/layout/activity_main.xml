@@ -45,6 +45,13 @@
             android:layout_height="wrap_content"
             android:onClick="onSearchForMealsButtonClicked"
             android:text="Search for Meals" />
+
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSearchForMealsFromWebButtonClicked"
+            android:text="Search for Meals from Web" />
     </LinearLayout>
 </FrameLayout>
 

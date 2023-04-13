@@ -31,6 +31,7 @@ class SearchByIngredientsActivity : AppCompatActivity() {
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val linearLayout = findViewById<LinearLayout>(R.id.cardsList)
         val searchText = txtSearch.text.trim()
+        val apiService = APIService()
 
         if (searchText.isEmpty()) {
             Toast.makeText(
@@ -52,14 +53,14 @@ class SearchByIngredientsActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val fetchedMeals: JSONArray =
-                        getMealsList("https://www.themealdb.com/api/json/v1/1/filter.php?i=$searchText")
+                        apiService.getMealsList("https://www.themealdb.com/api/json/v1/1/filter.php?i=$searchText")
 
                     for (i in 0 until fetchedMeals.length()) {
                         val meal: JSONObject = fetchedMeals[i] as JSONObject
                         val id = meal.getString("idMeal")
 
                         val detailedMeals: JSONArray =
-                            getMealsList("https://www.themealdb.com/api/json/v1/1/lookup.php?i=$id")
+                            apiService.getMealsList("https://www.themealdb.com/api/json/v1/1/lookup.php?i=$id")
 
                         val fetchedDetailedMeal: JSONObject = detailedMeals[0] as JSONObject
                         val mealObj: Meal = Meal.fromJson(fetchedDetailedMeal)
@@ -70,10 +71,13 @@ class SearchByIngredientsActivity : AppCompatActivity() {
                         progressBar.visibility = View.GONE
 
                         for (meal in fetchedMealsList) {
-                            val cardLinearLayout: LinearLayout = LayoutInflater.from(applicationContext)
-                                .inflate(R.layout.card, linearLayout, false) as LinearLayout
-                            cardLinearLayout.findViewById<TextView>(R.id.cardTextView).text = meal.toString()
-                            cardLinearLayout.findViewById<ImageView>(R.id.cardImageView).visibility = View.GONE
+                            val cardLinearLayout: LinearLayout =
+                                LayoutInflater.from(applicationContext)
+                                    .inflate(R.layout.card, linearLayout, false) as LinearLayout
+                            cardLinearLayout.findViewById<TextView>(R.id.cardTextView).text =
+                                meal.toString()
+                            cardLinearLayout.findViewById<ImageView>(R.id.cardImageView).visibility =
+                                View.GONE
                             linearLayout.addView(cardLinearLayout)
                         }
                     }
@@ -90,33 +94,6 @@ class SearchByIngredientsActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun sendHttpGetRequest(url: String): JSONObject {
-        val connection = URL(url).openConnection() as HttpURLConnection
-        connection.requestMethod = "GET"
-
-        if (connection.responseCode != HttpURLConnection.HTTP_OK) {
-            throw Exception("Failed to connect. Error code: ${connection.responseCode}")
-        }
-
-        val response = StringBuilder()
-        connection.inputStream.bufferedReader().useLines { lines ->
-            lines.forEach {
-                response.append(it)
-            }
-        }
-
-        return JSONObject(response.toString())
-    }
-
-    private fun getMealsList(url: String): JSONArray {
-        val fetchedData: JSONObject = sendHttpGetRequest(url)
-        if (fetchedData.isNull("meals")) {
-            throw Exception("No meals found!");
-        }
-
-        return fetchedData.getJSONArray("meals")
     }
 
 

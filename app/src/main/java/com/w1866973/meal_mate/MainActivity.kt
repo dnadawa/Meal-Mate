@@ -190,7 +190,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onSearchForMealsButtonClicked(view: View){
+        navigateToSearchForMealsPage(false)
+    }
+
+    fun onSearchForMealsFromWebButtonClicked(view: View){
+        navigateToSearchForMealsPage(true)
+    }
+
+    private fun navigateToSearchForMealsPage(fromWeb: Boolean){
         val intent = Intent(this, SearchForMealsActivity::class.java)
+        intent.putExtra("fromWeb", fromWeb)
         startActivity(intent)
     }
 }

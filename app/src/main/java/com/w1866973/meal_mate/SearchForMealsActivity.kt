@@ -1,7 +1,6 @@
 package com.w1866973.meal_mate
 
 import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,13 +10,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
 class SearchForMealsActivity : AppCompatActivity() {
+    var fromWeb: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_for_meals)
+
+        fromWeb = intent.getBooleanExtra("fromWeb", false)
     }
 
     fun onSearchButtonPressed(view: View) {
@@ -38,52 +43,89 @@ class SearchForMealsActivity : AppCompatActivity() {
             ).show()
         } else {
             val linearLayout = findViewById<LinearLayout>(R.id.searchForMealsCardsList)
-            val appDatabase: AppDatabase = AppDatabase.getDatabase(this)
-            val mealDao: MealDao = appDatabase.mealDao()
+            val progressBar: ProgressBar = findViewById(R.id.searchForMealsProgress)
+
 
             linearLayout.removeAllViews()
+            progressBar.visibility = View.VISIBLE
+
             CoroutineScope(Dispatchers.IO).launch {
-                val meals: List<Meal> = mealDao.searchMeals(searchText.toString())
-
-                withContext(Dispatchers.Main) {
-                    if (meals.isEmpty()) {
-                        Toast.makeText(
-                            applicationContext,
-                            "No meals found!",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                try {
+                    var meals: List<Meal> = mutableListOf()
+                    if (!fromWeb) {
+                        meals = searchFromDB(searchText.toString())
                     } else {
-                        for (meal in meals) {
-                            val cardLinearLayout: LinearLayout =
-                                LayoutInflater.from(applicationContext)
-                                    .inflate(R.layout.card, linearLayout, false) as LinearLayout
-                            val textView: TextView =
-                                cardLinearLayout.findViewById(R.id.cardTextView)
-                            val imageView: ImageView =
-                                cardLinearLayout.findViewById(R.id.cardImageView)
-                            textView.text = meal.toString()
+                        val apiService = APIService()
+                        val jsonArray: JSONArray =
+                            apiService.getMealsList("https://www.themealdb.com/api/json/v1/1/search.php?s=$searchText")
+                        val mutableList = meals.toMutableList()
+                        for (i in 0 until jsonArray.length()) {
+                            val jsonMeal: JSONObject = jsonArray[i] as JSONObject
+                            val meal: Meal = Meal.fromJson(jsonMeal)
+                            mutableList.add(meal)
+                        }
+                        meals = mutableList.toList()
+                    }
 
-                            try {
-                                val bitmap = withContext(Dispatchers.IO) {
-                                    val url = URL(meal.mealThumb)
-                                    val connection = url.openConnection() as HttpURLConnection
-                                    connection.doInput = true
-                                    connection.connect()
-                                    val inputStream = connection.inputStream
-                                    val bitmap = BitmapFactory.decodeStream(inputStream)
-                                    inputStream.close()
-                                    connection.disconnect()
-                                    bitmap
+                    withContext(Dispatchers.Main) {
+                        if (meals.isEmpty()) {
+                            throw Exception("No meals found!")
+                        } else {
+                            val cards: ArrayList<LinearLayout> = arrayListOf()
+
+                            for (meal in meals) {
+                                val cardLinearLayout: LinearLayout =
+                                    LayoutInflater.from(applicationContext)
+                                        .inflate(R.layout.card, linearLayout, false) as LinearLayout
+                                val textView: TextView =
+                                    cardLinearLayout.findViewById(R.id.cardTextView)
+                                val imageView: ImageView =
+                                    cardLinearLayout.findViewById(R.id.cardImageView)
+                                textView.text = meal.toString()
+
+                                try {
+                                    val bitmap = withContext(Dispatchers.IO) {
+                                        val url = URL(meal.mealThumb)
+                                        val connection = url.openConnection() as HttpURLConnection
+                                        connection.doInput = true
+                                        connection.connect()
+                                        val inputStream = connection.inputStream
+                                        val bitmap = BitmapFactory.decodeStream(inputStream)
+                                        inputStream.close()
+                                        connection.disconnect()
+                                        bitmap
+                                    }
+                                    imageView.setImageBitmap(bitmap)
+                                } catch (e: Exception) {
+                                    imageView.setImageResource(R.drawable.logo2)
                                 }
-                                imageView.setImageBitmap(bitmap)
-                            } catch (e: Exception) {
-                                imageView.setImageResource(R.drawable.logo2)
+                                cards.add(cardLinearLayout)
                             }
-                            linearLayout.addView(cardLinearLayout)
+
+                            for (card in cards) {
+                                linearLayout.addView(card)
+                            }
+                            progressBar.visibility = View.GONE
                         }
                     }
+                } catch (e: Exception){
+                    withContext(Dispatchers.Main){
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(
+                            applicationContext,
+                            e.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
+
             }
         }
+    }
+
+    private fun searchFromDB(searchText: String): List<Meal> {
+        val appDatabase: AppDatabase = AppDatabase.getDatabase(this)
+        val mealDao: MealDao = appDatabase.mealDao()
+        return mealDao.searchMeals(searchText)
     }
 }
