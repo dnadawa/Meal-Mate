@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -28,7 +29,7 @@ class SearchByIngredientsActivity : AppCompatActivity() {
     fun onRetrieveMealsClicked(view: View) {
         val txtSearch = findViewById<EditText>(R.id.txtSearch)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        val cardsListView = findViewById<LinearLayout>(R.id.cardsList)
+        val linearLayout = findViewById<LinearLayout>(R.id.cardsList)
         val searchText = txtSearch.text.trim()
 
         if (searchText.isEmpty()) {
@@ -45,7 +46,7 @@ class SearchByIngredientsActivity : AppCompatActivity() {
             ).show()
         } else {
             progressBar.visibility = View.VISIBLE
-            cardsListView.removeAllViews()
+            linearLayout.removeAllViews()
             fetchedMealsList.clear()
 
             CoroutineScope(Dispatchers.IO).launch {
@@ -69,10 +70,11 @@ class SearchByIngredientsActivity : AppCompatActivity() {
                         progressBar.visibility = View.GONE
 
                         for (meal in fetchedMealsList) {
-                            val textView = LayoutInflater.from(applicationContext)
-                                .inflate(R.layout.card, cardsListView, false) as TextView
-                            textView.text = meal.toString()
-                            cardsListView.addView(textView)
+                            val cardLinearLayout: LinearLayout = LayoutInflater.from(applicationContext)
+                                .inflate(R.layout.card, linearLayout, false) as LinearLayout
+                            cardLinearLayout.findViewById<TextView>(R.id.cardTextView).text = meal.toString()
+                            cardLinearLayout.findViewById<ImageView>(R.id.cardImageView).visibility = View.GONE
+                            linearLayout.addView(cardLinearLayout)
                         }
                     }
                 } catch (e: Exception) {
