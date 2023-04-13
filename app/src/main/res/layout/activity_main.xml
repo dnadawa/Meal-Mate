@@ -10,6 +10,14 @@
         android:scaleType="centerCrop"
         android:src="@drawable/img3" />
 
+    <ImageView
+        android:layout_width="250dp"
+        android:layout_marginTop="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:scaleType="fitStart"
+        android:src="@drawable/logo" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
