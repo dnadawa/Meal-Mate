@@ -1,5 +1,7 @@
 package com.w1866973.meal_mate
 
+import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +11,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
 
 class SearchForMealsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,10 +54,32 @@ class SearchForMealsActivity : AppCompatActivity() {
                         ).show()
                     } else {
                         for (meal in meals) {
-                            val textView = LayoutInflater.from(applicationContext)
-                                .inflate(R.layout.card, linearLayout, false) as TextView
+                            val cardLinearLayout: LinearLayout =
+                                LayoutInflater.from(applicationContext)
+                                    .inflate(R.layout.card, linearLayout, false) as LinearLayout
+                            val textView: TextView =
+                                cardLinearLayout.findViewById(R.id.cardTextView)
+                            val imageView: ImageView =
+                                cardLinearLayout.findViewById(R.id.cardImageView)
                             textView.text = meal.toString()
-                            linearLayout.addView(textView)
+
+                            try {
+                                val bitmap = withContext(Dispatchers.IO) {
+                                    val url = URL(meal.mealThumb)
+                                    val connection = url.openConnection() as HttpURLConnection
+                                    connection.doInput = true
+                                    connection.connect()
+                                    val inputStream = connection.inputStream
+                                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                                    inputStream.close()
+                                    connection.disconnect()
+                                    bitmap
+                                }
+                                imageView.setImageBitmap(bitmap)
+                            } catch (e: Exception) {
+                                imageView.setImageResource(R.drawable.logo2)
+                            }
+                            linearLayout.addView(cardLinearLayout)
                         }
                     }
                 }
