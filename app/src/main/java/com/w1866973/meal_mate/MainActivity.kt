@@ -1,8 +1,10 @@
 package com.w1866973.meal_mate
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.launch
@@ -18,6 +20,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         appDatabase = AppDatabase.getDatabase(this)
         mealDao = appDatabase.mealDao()
+
+        //make status bar hide in landscape mode
+        //https://stackoverflow.com/questions/11856886/hiding-title-bar-notification-bar-when-device-is-oriented-to-landscape
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        }
     }
 
     fun onAddMealsButtonClicked(view: View) {

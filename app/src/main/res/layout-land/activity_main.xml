@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img3" />
+
+    <ImageView
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:scaleType="fitStart"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/logo" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|bottom"
+        android:orientation="vertical"
+        android:padding="20dp"
+        tools:context=".MainActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="5dp"
+            >
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:onClick="onAddMealsButtonClicked"
+                android:padding="10dp"
+                android:text="Add Meals to DB"
+                android:textSize="13sp"
+                app:cornerRadius="40dp" />
+
+            <Space
+                android:layout_width="15dp"
+                android:layout_height="0dp"/>
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                app:cornerRadius="40dp"
+                android:padding="10dp"
+                android:textSize="13sp"
+                android:onClick="onSearchMealByIngredientsButtonClicked"
+                android:text="Search for Meals By Ingredient" />
+        </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            app:cornerRadius="40dp"
+            android:padding="10dp"
+            android:textSize="13sp"
+            android:onClick="onSearchForMealsButtonClicked"
+            android:text="Search for Meals" />
+        <Space
+            android:layout_width="15dp"
+            android:layout_height="0dp"/>
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            app:cornerRadius="40dp"
+            android:padding="10dp"
+            android:textSize="13sp"
+            android:onClick="onSearchForMealsFromWebButtonClicked"
+            android:text="Search for Meals from Web" />
+    </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
+
