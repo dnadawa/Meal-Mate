@@ -13,8 +13,6 @@ import android.widget.Toast
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
 
 class SearchByIngredientsActivity : AppCompatActivity() {
 
@@ -33,6 +31,7 @@ class SearchByIngredientsActivity : AppCompatActivity() {
         val searchText = txtSearch.text.trim()
         val apiService = APIService()
 
+        txtSearch.clearFocus()
         if (searchText.isEmpty()) {
             Toast.makeText(
                 applicationContext,
