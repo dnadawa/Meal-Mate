@@ -24,7 +24,7 @@
         android:minHeight="48dp" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnRetrieveMeals"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cornerRadius="40dp"
@@ -32,7 +32,7 @@
         android:onClick="onRetrieveMealsClicked"/>
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btnSaveToDB"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cornerRadius="40dp"

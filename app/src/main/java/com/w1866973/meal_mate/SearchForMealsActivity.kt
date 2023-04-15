@@ -52,12 +52,12 @@ class SearchForMealsActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
         } else {
+            val apiService = APIService()
             val linearLayout = findViewById<LinearLayout>(R.id.searchForMealsCardsList)
             val progressBar: ProgressBar = findViewById(R.id.searchForMealsProgress)
 
-
             linearLayout.removeAllViews()
-            progressBar.visibility = View.VISIBLE
+            apiService.changeLoadingState(view as Button, progressBar = progressBar, isLoading = true)
 
             CoroutineScope(Dispatchers.IO).launch {
                 try {
@@ -65,7 +65,6 @@ class SearchForMealsActivity : AppCompatActivity() {
                     if (!fromWeb) {
                         meals = searchFromDB(searchText.toString())
                     } else {
-                        val apiService = APIService()
                         val jsonArray: JSONArray =
                             apiService.getMealsList("https://www.themealdb.com/api/json/v1/1/search.php?s=$searchText")
                         val mutableList = meals.toMutableList()
@@ -115,12 +114,12 @@ class SearchForMealsActivity : AppCompatActivity() {
                             for (card in cards) {
                                 linearLayout.addView(card)
                             }
-                            progressBar.visibility = View.GONE
+                            apiService.changeLoadingState(view, progressBar = progressBar, isLoading = false)
                         }
                     }
                 } catch (e: Exception){
                     withContext(Dispatchers.Main){
-                        progressBar.visibility = View.GONE
+                        apiService.changeLoadingState(view, progressBar = progressBar, isLoading = false)
                         Toast.makeText(
                             applicationContext,
                             e.message,

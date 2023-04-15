@@ -36,7 +36,7 @@
         android:layout_marginBottom="10dp"
         android:orientation="horizontal">
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btnRetrieveMeals"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
             android:layout_height="0dp"/>
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btnSaveToDB"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <LinearLayout
             android:layout_width="match_parent"

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -36,8 +37,10 @@ class SearchByIngredientsActivity : AppCompatActivity() {
 
     fun onRetrieveMealsClicked(view: View) {
         val txtSearch = findViewById<EditText>(R.id.txtSearch)
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val linearLayout = findViewById<LinearLayout>(R.id.cardsList)
+        val retrieveButton = findViewById<Button>(R.id.btnRetrieveMeals)
+        val saveToDB = findViewById<Button>(R.id.btnSaveToDB)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val searchText = txtSearch.text.trim()
         val apiService = APIService()
 
@@ -55,7 +58,7 @@ class SearchByIngredientsActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
         } else {
-            progressBar.visibility = View.VISIBLE
+            apiService.changeLoadingState(retrieveButton, saveToDB, progressBar = progressBar, isLoading = true)
             linearLayout.removeAllViews()
             fetchedMealsList.clear()
 
@@ -77,7 +80,7 @@ class SearchByIngredientsActivity : AppCompatActivity() {
                     }
 
                     withContext(Dispatchers.Main) {
-                        progressBar.visibility = View.GONE
+                        apiService.changeLoadingState(retrieveButton, saveToDB, progressBar = progressBar, isLoading = false)
 
                         for (meal in fetchedMealsList) {
                             val cardLinearLayout: LinearLayout =
@@ -92,7 +95,7 @@ class SearchByIngredientsActivity : AppCompatActivity() {
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        progressBar.visibility = View.GONE
+                        apiService.changeLoadingState(retrieveButton, saveToDB, progressBar = progressBar, isLoading = true)
 
                         Toast.makeText(
                             applicationContext,
@@ -104,7 +107,6 @@ class SearchByIngredientsActivity : AppCompatActivity() {
             }
         }
     }
-
 
     fun onSaveToDBButtonClicked(view: View) {
         val appDatabase: AppDatabase = AppDatabase.getDatabase(this)
