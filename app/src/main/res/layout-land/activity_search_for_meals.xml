@@ -38,14 +38,14 @@
             android:layout_height="0dp"/>
 
         <Button
-            android:id="@+id/button6"
-            android:layout_weight="1"
+            android:id="@+id/btnSearch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
-            app:cornerRadius="40dp"
+            android:layout_weight="1"
+            android:onClick="onSearchButtonPressed"
             android:text="Search"
-            android:onClick="onSearchButtonPressed"/>
+            android:textSize="13sp"
+            app:cornerRadius="40dp" />
     </LinearLayout>
 
     <ProgressBar
