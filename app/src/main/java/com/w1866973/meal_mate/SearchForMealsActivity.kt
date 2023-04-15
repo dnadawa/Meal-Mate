@@ -1,10 +1,12 @@
 package com.w1866973.meal_mate
 
+import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +25,14 @@ class SearchForMealsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search_for_meals)
 
         fromWeb = intent.getBooleanExtra("fromWeb", false)
+
+        //make status bar hide in landscape mode
+        //https://stackoverflow.com/questions/11856886/hiding-title-bar-notification-bar-when-device-is-oriented-to-landscape
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        }
     }
 
     fun onSearchButtonPressed(view: View) {
