@@ -2,6 +2,7 @@ package com.w1866973.meal_mate
 
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ProgressBar
 import org.json.JSONArray
 import org.json.JSONObject
@@ -36,10 +37,11 @@ class APIService {
         return fetchedData.getJSONArray("meals")
     }
 
-    fun changeLoadingState(vararg buttons: Button, progressBar: ProgressBar, isLoading: Boolean){
+    fun changeLoadingState(vararg buttons: Button, editText: EditText, progressBar: ProgressBar, isLoading: Boolean){
         for(btn in buttons){
             btn.isEnabled = !isLoading
         }
+        editText.isEnabled = !isLoading
         progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }
