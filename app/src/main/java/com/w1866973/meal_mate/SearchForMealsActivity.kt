@@ -158,6 +158,7 @@ class SearchForMealsActivity : AppCompatActivity() {
     }
 
     private suspend fun addCards(fetchedMeals: List<Meal>) {
+        cards.clear()
         val apiService = APIService()
 
         for (meal in fetchedMeals) {
