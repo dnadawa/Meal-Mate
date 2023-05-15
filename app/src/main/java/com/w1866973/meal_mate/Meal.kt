@@ -15,7 +15,8 @@ data class Meal(
     val mealThumb: String,
     val tags: String?,
     val youtube: String,
-    val ingredients: ArrayList<Ingredient>,
+    val ingredients: String,
+    val measures: String,
     val source: String?,
     val imageSource: String?,
     val creativeCommonsConfirmed: String?,
@@ -33,14 +34,16 @@ data class Meal(
             val mealThumb = json.getString("strMealThumb")
             val tags = if (!json.isNull("strTags")) json.getString("strTags") else null
             val youtube = json.getString("strYoutube")
-            val ingredients = ArrayList<Ingredient>()
+            val ingredientsArrayList = ArrayList<String>()
+            val measuresArrayList = ArrayList<String>()
             var keyIndex = 1
             for (key in json.keys()) {
                 if (key.startsWith("strIngredient")) {
                     if (!json.isNull(key) && json.getString(key).isNotEmpty()) {
                         val ingredientName = json.getString(key)
                         val ingredientMeasure = json.getString("strMeasure$keyIndex")
-                        ingredients.add(Ingredient(ingredientName, ingredientMeasure))
+                        ingredientsArrayList.add(ingredientName)
+                        measuresArrayList.add(ingredientMeasure)
                         keyIndex++
                     }
                 }
@@ -62,7 +65,8 @@ data class Meal(
                 mealThumb,
                 tags,
                 youtube,
-                ingredients,
+                ingredientsArrayList.toString(),
+                measuresArrayList.toString(),
                 source,
                 imageSource,
                 creativeCommonsConfirmed,
@@ -80,11 +84,13 @@ data class Meal(
         stringBuilder.append("\"Instructions\":\"").append(instructions).append("\",\n")
         stringBuilder.append("\"Tags\":").append(tags?.let { "\"$it\"" } ?: "null").append(",\n")
         stringBuilder.append("\"Youtube\":\"").append(youtube).append("\",\n")
-        for (i in 0 until ingredients.size) {
-            stringBuilder.append("\"Ingredient").append(i+1).append("\":\"").append(ingredients[i].name).append("\",\n")
+        val ingredientsList = ingredients.substring(1).split(", ").dropLast(1)
+        val measuresList = measures.substring(1).split(", ").dropLast(1)
+        for (i in ingredientsList.indices) {
+            stringBuilder.append("\"Ingredient").append(i+1).append("\":\"").append(ingredientsList[i]).append("\",\n")
         }
-        for (i in 0 until ingredients.size) {
-            stringBuilder.append("\"Measure").append(i+1).append("\":\"").append(ingredients[i].measure).append("\",\n")
+        for (i in measuresList.indices) {
+            stringBuilder.append("\"Measure").append(i+1).append("\":\"").append(measuresList[i]).append("\",\n")
         }
         return stringBuilder.toString()
     }

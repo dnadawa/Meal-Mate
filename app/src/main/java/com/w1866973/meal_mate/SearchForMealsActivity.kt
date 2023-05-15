@@ -133,6 +133,7 @@ class SearchForMealsActivity : AppCompatActivity() {
                         e.message,
                         Toast.LENGTH_SHORT
                     ).show()
+                    println(e)
                 }
             }
 
